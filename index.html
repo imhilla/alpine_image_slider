@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script defer src='https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js'></script>
+</head>
+
+<body x-data="scrollData" class="w-screen h-screen overflow-hidden">
+    <div class="flex flex-row w-screen h-screen overflow-x-scroll scroll-smooth relative"
+        @scroll.window="scrollBanner()" id="bannerId" x-ref="bannerRef">
+        <template x-for="(imageUrl, index) in imagelinks">
+            <img :src="imageUrl" :id="'banner' + index" class="h-screen w-screen object-cover object-center" />
+        </template>
+    </div>
+    <div class="flex items-center justify-center absolute bottom-[1.74rem] mt-[1.74rem]">
+        <template x-for="slide in slides" :key="slide">
+            <button
+                class="flex w-[0.7rem] h-[0.7rem] mx-2 mt-4 overflow-hidden transition-colors duration-200 ease-out rounded-full hover:shadow-md"
+                :class="{
+                    'bg-white ': scrollCount === slide,
+                    'bg-transparent border': scrollCount !== slide
+                }" x-on:click="scrollByBtn(slide)"></button>
+        </template>
+    </div>
+    <div class="absolute top-0">
+        <button @click="scrollBanner()" class="w-[2rem] h-[2rem]" id="prev">
+            left
+        </button>
+        <button @click="scrollBanner()" class="w-[2rem] h-[2rem] ml-[0.62rem]" id="next">
+            right
+        </button>
+    </div>
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('scrollData', () => ({
+                scrollLeftWidth: 0,
+                direction: 'right',
+                slides: [0, 1, 2],
+                scrollCount: 0,
+                intervalId: null,
+                resetTheInterval() {
+                    clearInterval(this.intervalId)
+                },
+                imagelinks: [
+                    'https://images.unsplash.com/photo-1485871981521-5b1fd3805eee?q=80&w=3540&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+                    'https://images.unsplash.com/photo-1492666673288-3c4b4576ad9a?q=80&w=3432&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+                    'https://images.unsplash.com/photo-1518391846015-55a9cc003b25?q=80&w=3540&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+
+                ],
+                scrollByBtn(slide) {
+                    let diff = Math.abs(slide - this.scrollCount)
+                    if (this.scrollCount == slide) {
+                        return
+                    } else if (this.scrollCount > slide) {
+                        this.scrollCount = slide
+                        document.getElementById('bannerId').scrollLeft -= (this.scrollLeftWidth * diff)
+                    } else {
+                        this.scrollCount = slide
+                        document.getElementById('bannerId').scrollLeft += (this.scrollLeftWidth * diff)
+                    }
+                    if (this.scrollCount > 1) {
+                        this.direction = 'left'
+                    } else if (this.scrollCount == 0) {
+                        this.direction = 'right'
+                    }
+                    this.resetTheInterval()
+                    this.bannerInterval()
+                },
+                scrollBanner() {
+                    if (this.scrollLeftWidth) {
+                        if (this.direction == 'right') {
+                            this.scrollCount += 1
+                            document.getElementById('bannerId').scrollLeft += this.scrollLeftWidth
+                        } else {
+                            this.scrollCount -= 1
+                            document.getElementById('bannerId').scrollLeft -= this.scrollLeftWidth
+                        }
+                        if (this.scrollCount > 1) {
+                            this.direction = 'left'
+                        } else if (this.scrollCount == 0) {
+                            this.direction = 'right'
+                        }
+                        this.resetTheInterval()
+                        this.bannerInterval()
+                    }
+                },
+                bannerInterval() {
+                    this.intervalId = setInterval(function () {
+                        if (this.scrollLeftWidth) {
+                            if (this.direction == 'right') {
+                                this.scrollCount += 1
+                                document.getElementById('bannerId').scrollLeft += this.scrollLeftWidth
+                            } else {
+                                this.scrollCount -= 1
+                                document.getElementById('bannerId').scrollLeft -= this.scrollLeftWidth
+                            }
+                            if (this.scrollCount > 1) {
+                                this.direction = 'left'
+                            } else if (this.scrollCount == 0) {
+                                this.direction = 'right'
+                            }
+                        }
+                    }.bind(this), 5000)
+                },
+                init() {
+                    this.bannerInterval()
+                    this.scrollLeftWidth = document.getElementById('bannerId').getBoundingClientRect().width
+                }
+            }))
+        })
+    </script>
+</body>
+
+</html>
