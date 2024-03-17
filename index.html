@@ -10,8 +10,7 @@
 </head>
 
 <body x-data="scrollData" class="w-screen h-screen overflow-hidden">
-    <div class="flex flex-row w-full h-full overflow-x-hidden scroll-smooth relative" id="bannerId"
-        x-ref="bannerRef">
+    <div class="flex flex-row w-full h-full overflow-x-hidden scroll-smooth relative" id="bannerId" x-ref="bannerRef">
         <template x-for="(imageUrl, index) in imagelinks">
             <div class="w-full h-full min-w-full min-h-full">
                 <img :src="imageUrl" :id="'banner' + index" class="h-full w-full object-cover object-center" />
@@ -29,10 +28,10 @@
         </template>
     </div>
     <div class="absolute top-0">
-        <button @click="scrollBanner()" class="w-[2rem] h-[2rem]" id="prev">
+        <button @click="scrollBannerRight()" class="w-[2rem] h-[2rem]" id="prev">
             left
         </button>
-        <button @click="scrollBanner()" class="w-[2rem] h-[2rem] ml-[0.62rem]" id="next">
+        <button @click="scrollBannerLeft()" class="w-[2rem] h-[2rem] ml-[0.62rem]" id="next">
             right
         </button>
     </div>
@@ -72,8 +71,26 @@
                     this.resetTheInterval()
                     this.bannerInterval()
                 },
-                scrollBanner() {
-                    if (this.scrollLeftWidth) {
+                scrollBannerLeft() {
+                    if (this.scrollLeftWidth && this.scrollCount != 2) {
+                        if (this.direction == 'right') {
+                            this.scrollCount += 1
+                            document.getElementById('bannerId').scrollLeft += this.scrollLeftWidth
+                        } else {
+                            this.scrollCount -= 1
+                            document.getElementById('bannerId').scrollLeft -= this.scrollLeftWidth
+                        }
+                        if (this.scrollCount > 1) {
+                            this.direction = 'left'
+                        } else if (this.scrollCount == 0) {
+                            this.direction = 'right'
+                        }
+                        this.resetTheInterval()
+                        this.bannerInterval()
+                    }
+                },
+                scrollBannerRight() {
+                    if (this.scrollLeftWidth && this.scrollCount != 0) {
                         if (this.direction == 'right') {
                             this.scrollCount += 1
                             document.getElementById('bannerId').scrollLeft += this.scrollLeftWidth
