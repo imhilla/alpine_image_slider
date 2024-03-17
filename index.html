@@ -10,10 +10,12 @@
 </head>
 
 <body x-data="scrollData" class="w-screen h-screen overflow-hidden">
-    <div class="flex flex-row w-screen h-screen overflow-x-scroll scroll-smooth relative"
-        @scroll.window="scrollBanner()" id="bannerId" x-ref="bannerRef">
+    <div class="flex flex-row w-full h-full overflow-x-hidden scroll-smooth relative bg-green-500" id="bannerId"
+        x-ref="bannerRef">
         <template x-for="(imageUrl, index) in imagelinks">
-            <img :src="imageUrl" :id="'banner' + index" class="h-screen w-screen object-cover object-center" />
+            <div class="w-full h-full min-w-full min-h-full">
+                <img :src="imageUrl" :id="'banner' + index" class="h-full w-full object-cover object-center" />
+            </div>
         </template>
     </div>
     <div class="flex items-center justify-center absolute bottom-[1.74rem] mt-[1.74rem]">
